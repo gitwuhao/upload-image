@@ -1,0 +1,32 @@
+.field-value-box {
+    float: right;
+}
+
+.more-icon-box {
+    float: left;
+    margin: 15px 5px 0px 10px;
+    color: #BBB;
+}
+
+.photo-box {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background-color: #F4F4F4;
+    border: 1px solid #DDD;
+    float: left;
+    overflow: hidden;
+}
+
+.photo-box img {
+    width: 100%;
+    vertical-align: middle;
+}
+
+.photo-box input {
+    width: 50px;
+    height: 50px;
+    opacity: 0.01;
+    position: absolute;
+    z-index: 9999;
+}

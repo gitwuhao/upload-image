@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>File Upload Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, minimum-ui">
+    <link rel="stylesheet" type="text/css" href="css/jquery.imageupload.css">
+</head>
+
+<body>
+    <input type="file" name="files" multiple="multiple" accept="image/*" style="width:150px;">
+    <input type="button" id="start" value="start" />
+    <input type="button" id="cancel" value="cancel" />
+    <div class="image-upload-preview-box">
+        <ul class="image-upload-preview-list">
+            <li>
+                <div class="img-item"><img/></div>
+                <div class="checkbox">
+                    <input type="checkbox" />
+                </div>
+                <div class="progress-bar">
+                    <span style="width: 45%"></span>
+                </div>
+            </li>
+            <li>
+                <div class="img-item"><img/></div>
+                <div class="checkbox">
+                    <input type="checkbox" />
+                </div>
+            </li>
+            <li>
+                <div class="img-item"><img/></div>
+                <div class="checkbox">
+                    <input type="checkbox" />
+                </div>
+            </li>
+            <li>
+                <div class="img-item"><img/></div>
+                <div class="checkbox">
+                    <input type="checkbox" />
+                </div>
+            </li>
+            <li>
+                <div class="img-item"><img/></div>
+                <div class="checkbox">
+                    <input type="checkbox" />
+                </div>
+            </li>
+            <li>
+                <div class="img-item"><img/></div>
+                <div class="checkbox">
+                    <input type="checkbox" />
+                </div>
+            </li>
+        </ul>
+    </div>
+    <script src="js/lib/jquery-2.1.1.js"></script>
+    <script src="js/lib/handlebars-v3.0.3.js"></script>
+    <script src="js/jquery.imageupload.js"></script>
+    <script id="imagePreviewItemTpl" type="text/x-handlebars-template">
+        <li data-key="{{key}}">
+            <div class="img-item">
+                <img src="{{src}}" />
+            </div>
+            <div class="checkbox">
+                <input type="checkbox" checked />
+            </div>
+            <div class="progress-bar">
+                <span></span>
+            </div>
+        </li>
+    </script>
+    <script>
+    var tpl = $('#imagePreviewItemTpl').html();
+    var template = Handlebars.compile(tpl);
+
+    var imageupload = $.imageupload({
+        url: '/upload/index.jsp',
+        $file: $('[name=files]'),
+        isAppend: true,
+        ready: function() {
+            var me = this;
+            me.$previewList = $('.image-upload-preview-list');
+            me.$previewList.empty();
+            me.$previewList.on('click', function(event) {
+                var $li = $(event.target).closest('li'),
+                    fileKey, file;
+                fileKey = $li.attr('data-key');
+                file = me.fileList[fileKey];
+                me.onDeleteHandle(file);
+                me.onDelete({
+                    $elem: $li,
+                    file: file
+                })
+            });
+        },
+        onChange: function(files) {
+            var me = this;
+            if (!me.isAppend) {
+                me.$previewList.empty();
+            }
+            if (!files || !files.length) {
+                return;
+            }
+            for (var i = 0, len = files.length; i < len; i++) {
+                me.readDataURL(files[i], me.onReadDataURL);
+            }
+        },
+        onProgress: function(event) {
+            var file = event.file;
+            $('[data-key="' + file._key_ + '"] .progress-bar span').css('width', event.percent + '%');
+        },
+        onSuccess: function(file) {
+            $('[data-key="' + file._key_ + '"]').remove();
+        },
+        onReadDataURL: function(file, data) {
+            var html = template({
+                key: file._key_,
+                src: data
+            });
+            this.$previewList.append(html);
+        },
+        onDelete: function(event) {
+            event.$elem.remove();
+        },
+        onSendAfter: function(file) {
+            $('[data-key="' + file._key_ + '"] .progress-bar').show();
+        }
+    });
+
+
+    $('#start').on('click', function() {
+        imageupload.start();
+    });
+
+
+    $('#cancel').on('click', function() {
+        imageupload.cancel();
+    });
+    </script>
+</body>
+
+</html>

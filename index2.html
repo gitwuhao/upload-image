@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>File Upload Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, minimum-ui">
+	<link rel="stylesheet" type="text/css" href="css/photo.css" />
+</head>
+
+<body>
+<br/><br/>
+    <table width="100%">
+        <tr>
+            <td width="100px">我的头像</td>
+            <td>
+                <div class="field-value-box">
+    				<div class="photo-box">
+    					<input type="file" name="photo" accept="image/*" />
+    					<img />
+    				</div>
+                    <div class="more-icon-box">＞</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+    
+    <script src="js/lib/jquery-2.1.1.js"></script>
+    <script type="text/javascript">
+	(function(){
+		function readDataURL(file, callback) {
+            if(!file){
+                callback('');
+                return;
+            }
+			var reader = new FileReader();
+			reader.onload = function(e) {
+				callback(e.target.result);
+			};
+			reader.readAsDataURL(file);
+		};
+		var $img=$('.photo-box img');
+		$('[name="photo"]').on('change', function(event) {
+			var file=event.target.files[0];
+			if(!file){
+				return;
+			}
+			readDataURL(file,function(data){
+				$img.attr('src',data);
+				//上传图片
+				uploadImage(file);
+			});
+		});
+
+		function uploadImage(file){
+			 var xhr = new XMLHttpRequest();
+				 if (!xhr.upload) {
+					 return;
+				 }
+
+				 // 文件上传成功或是失败
+				 xhr.onreadystatechange = function(e) {
+					 if (xhr.readyState == 4) {
+						 if (xhr.status == 200) {
+							 alert('上传成功');
+						 } else {
+							 alert('上传失败');
+						 }
+					 }
+				 };
+				 // 开始上传
+				 xhr.open("POST", '%upload_path%', true);
+
+				 var formData = new FormData();
+				 formData.append('file', file, encodeURIComponent(file.name));
+
+				 xhr.send(formData);
+			};
+	})();
+    </script>
+	<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+</body>
+
+</html>
